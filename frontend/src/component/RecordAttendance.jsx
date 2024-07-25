@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+import useFetchStudents from "../Hook/useFetchStudents"; // Ensure the path is correct
 
 const RecordAttendance = () => {
   const [studentId, setStudentId] = useState("");
@@ -11,6 +12,9 @@ const RecordAttendance = () => {
   // State for scanners and attendance records
   const [scanners, setScanners] = useState([]);
   const [attendanceRecords, setAttendanceRecords] = useState([]);
+
+  // Fetch students using custom hook
+  const { students, loading: studentLoading, error: studentError } = useFetchStudents();
 
   // Function to record attendance
   const recordAttendance = async () => {
@@ -59,7 +63,6 @@ const RecordAttendance = () => {
       setError(err);
     }
   };
-  
 
   // Fetch data on component mount
   useEffect(() => {
@@ -105,6 +108,17 @@ const RecordAttendance = () => {
         {scanners.map((scanner) => (
           <li key={scanner._id}>
             {scanner.name} (ID: {scanner._id})
+          </li>
+        ))}
+      </ul>
+
+      <h2>Students</h2>
+      {studentLoading && <p>Loading students...</p>}
+      {studentError && <p style={{ color: 'red' }}>Error: {studentError.message}</p>}
+      <ul>
+        {students.map((student) => (
+          <li key={student._id}>
+            {student.name} (ID: {student._id})
           </li>
         ))}
       </ul>

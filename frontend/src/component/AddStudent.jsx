@@ -1,5 +1,8 @@
 import React from 'react';
 import useAddStudent from '../Hook/useAddStudent';
+import useFetchStudents from "../Hook/useFetchStudents"; // Ensure the path is correct
+
+
 
 const AddStudent = () => {
   const {
@@ -7,11 +10,17 @@ const AddStudent = () => {
     setStudentId,
     name,
     setName,
-    loading,
-    error,
+    loading: addingLoading,
+    error: addingError,
     success,
     addStudent
   } = useAddStudent();
+
+  const {
+    students,
+    loading: fetchingLoading,
+    error: fetchingError
+  } = useFetchStudents();
 
   return (
     <div>
@@ -40,12 +49,22 @@ const AddStudent = () => {
             required
           />
         </div>
-        <button type="submit" disabled={loading}>
-          {loading ? 'Adding...' : 'Add Student'}
+        <button type="submit" disabled={addingLoading}>
+          {addingLoading ? 'Adding...' : 'Add Student'}
         </button>
-        {error && <p>Error: {error.message}</p>}
+        {addingError && <p>Error: {addingError.message}</p>}
         {success && <p>Student added successfully!</p>}
       </form>
+      <h2>Student List</h2>
+      {fetchingLoading && <p>Loading students...</p>}
+      {fetchingError && <p>Error: {fetchingError.message}</p>}
+      <ul>
+        {students.map((student) => (
+          <li key={student._id}>
+            {student.studentId}: {student.name}
+          </li>
+        ))}
+      </ul>
     </div>
   );
 };
