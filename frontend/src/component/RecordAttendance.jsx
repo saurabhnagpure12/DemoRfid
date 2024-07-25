@@ -8,6 +8,7 @@ const RecordAttendance = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(false);
+  const [dataLoaded, setDataLoaded] = useState(false);
 
   // State for scanners and attendance records
   const [scanners, setScanners] = useState([]);
@@ -41,7 +42,7 @@ const RecordAttendance = () => {
       throw new Error('Failed to fetch scanners');
     }
   };
-  
+
   const fetchAttendanceRecords = async () => {
     try {
       const response = await axios.get('/api/attendance');
@@ -50,7 +51,7 @@ const RecordAttendance = () => {
       throw new Error('Failed to fetch attendance records');
     }
   };
-  
+
   const fetchData = async () => {
     try {
       const [scanners, attendanceRecords] = await Promise.all([
@@ -59,6 +60,7 @@ const RecordAttendance = () => {
       ]);
       setScanners(scanners);
       setAttendanceRecords(attendanceRecords);
+      setDataLoaded(true); // Set dataLoaded to true once data is fetched and mapped
     } catch (err) {
       setError(err);
     }
@@ -68,6 +70,22 @@ const RecordAttendance = () => {
   useEffect(() => {
     fetchData();
   }, []);
+
+  // Function to get student name by ID
+  const getStudentNameById = (id) => {
+    const student = students.find((student) => student.studentId === id);
+    return student ? student.name : "Unknown Student";
+  };
+
+  // Function to get scanner name by ID
+  const getScannerNameById = (id) => {
+    const scanner = scanners.find((scanner) => scanner.scannerId === id);
+    return scanner ? scanner.name : "Unknown Scanner";
+  };
+
+  if (!dataLoaded) {
+    return <p>Loading data...</p>; // Show loading message while data is being fetched and processed
+  }
 
   return (
     <div>
@@ -106,8 +124,8 @@ const RecordAttendance = () => {
       <h2>Scanners</h2>
       <ul>
         {scanners.map((scanner) => (
-          <li key={scanner._id}>
-            {scanner.name} (ID: {scanner._id})
+          <li key={scanner.scannerId}>
+            {scanner.name} (ID: {scanner.scannerId})
           </li>
         ))}
       </ul>
@@ -117,8 +135,8 @@ const RecordAttendance = () => {
       {studentError && <p style={{ color: 'red' }}>Error: {studentError.message}</p>}
       <ul>
         {students.map((student) => (
-          <li key={student._id}>
-            {student.name} (ID: {student._id})
+          <li key={student.studentId}>
+            {student.name} (ID: {student.studentId})
           </li>
         ))}
       </ul>
@@ -128,7 +146,9 @@ const RecordAttendance = () => {
         <thead>
           <tr>
             <th>Student ID</th>
+            <th>Student Name</th>
             <th>Scanner ID</th>
+            <th>Scanner Name</th>
             <th>Status</th>
             <th>Timestamp</th>
           </tr>
@@ -137,7 +157,9 @@ const RecordAttendance = () => {
           {attendanceRecords.map((record) => (
             <tr key={record._id}>
               <td>{record.studentId}</td>
+              <td>{getStudentNameById(record.studentId)}</td>
               <td>{record.scannerId}</td>
+              <td>{getScannerNameById(record.scannerId)}</td>
               <td>{record.status}</td>
               <td>{new Date(record.timestamp).toLocaleString()}</td>
             </tr>
