@@ -1,8 +1,7 @@
-import React from 'react';
-import useAddStudent from '../Hook/useAddStudent';
-import useFetchStudents from "../Hook/useFetchStudents"; // Ensure the path is correct
-
-
+import React from "react";
+import useAddStudent from "../Hook/useAddStudent";
+import useFetchStudents from "../Hook/useFetchStudents";
+import "./AddStudent.css";
 
 const AddStudent = () => {
   const {
@@ -13,17 +12,17 @@ const AddStudent = () => {
     loading: addingLoading,
     error: addingError,
     success,
-    addStudent
+    addStudent,
   } = useAddStudent();
 
   const {
     students,
     loading: fetchingLoading,
-    error: fetchingError
+    error: fetchingError,
   } = useFetchStudents();
 
   return (
-    <div>
+    <div className="container">
       <h2>Add Student</h2>
       <form
         onSubmit={(e) => {
@@ -50,21 +49,31 @@ const AddStudent = () => {
           />
         </div>
         <button type="submit" disabled={addingLoading}>
-          {addingLoading ? 'Adding...' : 'Add Student'}
+          {addingLoading ? "Adding..." : "Add Student"}
         </button>
-        {addingError && <p>Error: {addingError.message}</p>}
-        {success && <p>Student added successfully!</p>}
+        {addingError && <p className="error">Error: {addingError.message}</p>}
+        {success && <p className="success">Student added successfully!</p>}
       </form>
-      <h2>Student List</h2>
-      {fetchingLoading && <p>Loading students...</p>}
-      {fetchingError && <p>Error: {fetchingError.message}</p>}
-      <ul>
-        {students.map((student) => (
-          <li key={student._id}>
-            {student.studentId}: {student.name}
-          </li>
-        ))}
-      </ul>
+
+      <div className="card">
+        <div>
+          <h2>Student List</h2>
+        </div>
+        <div>
+          {fetchingLoading && <p>Loading students...</p>}
+          {fetchingError && (
+            <p className="error">Error: {fetchingError.message}</p>
+          )}
+          <ul>
+            {students.map((student) => (
+              <div className="student-item" key={student._id}>
+                <span>(Name: {student.name}) </span>
+                <span> (ID: {student.studentId})</span>
+              </div>
+            ))}
+          </ul>
+        </div>
+      </div>
     </div>
   );
 };

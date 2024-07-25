@@ -1,6 +1,7 @@
 import React from 'react';
 import useAddScanner from '../Hook/useAddScanner';
 import useFetchScanners from '../Hook/useFetchScanners';
+import './AddScanner.css';
 
 const AddScanner = () => {
   const {
@@ -21,7 +22,7 @@ const AddScanner = () => {
   } = useFetchScanners();
 
   return (
-    <div>
+    <div className="container">
       <h2>Add Scanner</h2>
       <form
         onSubmit={(e) => {
@@ -50,20 +51,29 @@ const AddScanner = () => {
         <button type="submit" disabled={addingLoading}>
           {addingLoading ? 'Adding...' : 'Add Scanner'}
         </button>
-        {addingError && <p style={{ color: 'red' }}>Error: {addingError.message}</p>}
-        {success && <p style={{ color: 'green' }}>Scanner added successfully!</p>}
+        {addingError && <p className="error">Error: {addingError.message}</p>}
+        {success && <p className="success">Scanner added successfully!</p>}
       </form>
 
-      <h2>Scanner List</h2>
-      {fetchingLoading && <p>Loading scanners...</p>}
-      {fetchingError && <p style={{ color: 'red' }}>Error: {fetchingError.message}</p>}
-      <ul>
-        {scanners.map((scanner) => (
-          <li key={scanner._id}>
-            {scanner.scannerId}: {scanner.name}
-          </li>
-        ))}
-      </ul>
+      <div className="card">
+        <div>
+          <h2>Scanner List</h2>
+        </div>
+        <div>
+          {fetchingLoading && <p>Loading scanners...</p>}
+          {fetchingError && (
+            <p className="error">Error: {fetchingError.message}</p>
+          )}
+          <ul>
+            {scanners.map((scanner) => (
+              <div className="scanner-item" key={scanner._id}>
+                <span>(id: {scanner.scannerId})</span>
+                <span>(Name: {scanner.name})</span>
+              </div>
+            ))}
+          </ul>
+        </div>
+      </div>
     </div>
   );
 };

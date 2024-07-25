@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import useFetchStudents from "../Hook/useFetchStudents"; // Ensure the path is correct
-
+import "./RecordAttendance.css";
 const RecordAttendance = () => {
   const [studentId, setStudentId] = useState("");
   const [scannerId, setScannerId] = useState("");
@@ -15,7 +15,11 @@ const RecordAttendance = () => {
   const [attendanceRecords, setAttendanceRecords] = useState([]);
 
   // Fetch students using custom hook
-  const { students, loading: studentLoading, error: studentError } = useFetchStudents();
+  const {
+    students,
+    loading: studentLoading,
+    error: studentError,
+  } = useFetchStudents();
 
   // Function to record attendance
   const recordAttendance = async () => {
@@ -36,19 +40,19 @@ const RecordAttendance = () => {
   // Function to fetch scanners and attendance records
   const fetchScanners = async () => {
     try {
-      const response = await axios.get('/api/scanners');
+      const response = await axios.get("/api/scanners");
       return response.data;
     } catch (err) {
-      throw new Error('Failed to fetch scanners');
+      throw new Error("Failed to fetch scanners");
     }
   };
 
   const fetchAttendanceRecords = async () => {
     try {
-      const response = await axios.get('/api/attendance');
+      const response = await axios.get("/api/attendance");
       return response.data;
     } catch (err) {
-      throw new Error('Failed to fetch attendance records');
+      throw new Error("Failed to fetch attendance records");
     }
   };
 
@@ -89,6 +93,7 @@ const RecordAttendance = () => {
 
   return (
     <div>
+      <div>
       <h2>Record Attendance</h2>
       <form
         onSubmit={(e) => {
@@ -120,27 +125,7 @@ const RecordAttendance = () => {
         {error && <p>Error: {error.message}</p>}
         {success && <p>Attendance recorded successfully!</p>}
       </form>
-
-      <h2>Scanners</h2>
-      <ul>
-        {scanners.map((scanner) => (
-          <li key={scanner.scannerId}>
-            {scanner.name} (ID: {scanner.scannerId})
-          </li>
-        ))}
-      </ul>
-
-      <h2>Students</h2>
-      {studentLoading && <p>Loading students...</p>}
-      {studentError && <p style={{ color: 'red' }}>Error: {studentError.message}</p>}
-      <ul>
-        {students.map((student) => (
-          <li key={student.studentId}>
-            {student.name} (ID: {student.studentId})
-          </li>
-        ))}
-      </ul>
-
+</div><div>
       <h2>Attendance Records</h2>
       <table>
         <thead>
@@ -166,6 +151,33 @@ const RecordAttendance = () => {
           ))}
         </tbody>
       </table>
+      </div>
+      <div className="row">
+        <div className="column">
+          <h2>Scanners</h2>
+          <ul>
+            {scanners.map((scanner) => (
+              <li key={scanner.scannerId}>
+                {scanner.name} (ID: {scanner.scannerId})
+              </li>
+            ))}
+          </ul>
+        </div>
+        <div className="column">
+          <h2>Students</h2>
+          {studentLoading && <p>Loading students...</p>}
+          {studentError && (
+            <p style={{ color: "red" }}>Error: {studentError.message}</p>
+          )}
+          <ul>
+            {students.map((student) => (
+              <li key={student.studentId}>
+                {student.name} (ID: {student.studentId})
+              </li>
+            ))}
+          </ul>
+        </div>
+      </div>
     </div>
   );
 };
